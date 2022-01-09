@@ -1,6 +1,8 @@
+from rest_framework.response import Response
+
 from .models import Product
 from .serializers import ProductSerializer
-from rest_framework import generics
+from rest_framework import generics, status
 
 from .service import SmartContractService
 
@@ -24,7 +26,11 @@ class ProductCreateView(generics.CreateAPIView, generics.ListCreateAPIView):
                 price=serializer.validated_data.get('price'),
                 description=serializer.validated_data.get('description')
             )
-            serializer.update("transaction", tx)
+            data = dict(serializer.validated_data)
+            data['transaction'] = tx
+            serializer.update(serializer, data)
+            headers = self.get_success_headers(serializer.data)
+            return Response({"transaction": tx}, status=status.HTTP_201_CREATED,
+                            headers=headers)
         except Exception as e:
             raise e
-        return self.create(request, *args, **kwargs)

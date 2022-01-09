@@ -30,15 +30,21 @@ class SmartContractService(object):
                      price: int,
                      description: str) -> HexStr:
         product = self.web3.eth.contract(abi=self._abi,
-                                         address=self.integrator_address,
                                          bytecode=self._bytecode)
-
         result = product.functions.addProduct(product_id, product_name,
                                               category,
                                               price,
-                                              description).transact(
-            {"From": self.account})
-        return self.web3.toHex(result)
+                                              description).buildTransaction(
+            {
+                "from": "0xA65ae55B4ef18c58220d49f639C42250e1F7c9C8",
+                "to": self.integrator_address,
+                "value": self.web3.toWei(0, "ether"),
+                "gas": 2000000,
+                "gasPrice": self.web3.toWei("50", "gwei")
+            }
+        )
+        tx = self.web3.eth.sendTransaction(result)
+        return self.web3.toHex(tx)
 
     def read_from_contract(self, tx):
         return self.web3.eth.waitForTransactionReceipt(tx)
