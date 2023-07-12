@@ -4,7 +4,7 @@ from web3 import Web3
 class CreateAccount:
     def __init__(self, provider=None):
         self.w3 = Web3(Web3.HTTPProvider(provider or
-                                         'https://mainnet.infura.io/v3/65ccf5b7f3454c00b5c0c65acb9cfb61'))
+                                         'https://mainnet.infura.io/'))
 
     def _check_connection(self):
         return self.w3.isConnected()
